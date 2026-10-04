@@ -1,4 +1,4 @@
-#Gamer Hub
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -26,11 +26,11 @@
             color: #ffffff;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Changed to flex-start so it scrolls from top to bottom */
+            align-items: flex-start;
             min-height: 100vh;
             margin: 0;
-            padding: 40px 20px 80px 20px; /* Added 80px bottom padding for clean scrolling space */
-            overflow-y: auto; /* Fixed: Changes page parameters to allow scrolling down */
+            padding: 40px 20px 80px 20px;
+            overflow-y: auto;
         }
 
         /* Seamless particle drifting animation loop */
@@ -39,7 +39,7 @@
             to { background-position: 550px 1100px, 390px 760px, 680px 570px; }
         }
 
-        /* Fully Expanded Modern Glassmorphic Giveaway Card */
+        /* Fully Expanded Modern Glassmorphic Container */
         .giveaway-card {
             background: rgba(15, 10, 20, 0.6);
             backdrop-filter: blur(12px);
@@ -49,12 +49,13 @@
             border-radius: 24px;
             box-shadow: 0 0 50px rgba(255, 0, 60, 0.2);
             text-align: center;
-            max-width: 560px; /* Widened box parameters to 560px */
+            max-width: 560px;
             width: 100%;
             z-index: 2;
             margin-top: auto;
             margin-bottom: auto;
             animation: cardFadeIn 0.8s ease-out;
+            overflow: hidden;
         }
 
         @keyframes cardFadeIn {
@@ -62,6 +63,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Typography */
         h1 {
             font-size: 2.7rem;
             margin: 0 0 15px 0;
@@ -120,10 +122,10 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Prank Result Area Container */
-        .prank-container {
+        /* View State Steps */
+        .prank-container, .redirect-container {
             display: none;
-            animation: fadeIn 0.5s ease-in-out;
+            animation: fadeIn 0.4s ease-in-out;
         }
 
         /* Red Error Message Styling */
@@ -139,7 +141,6 @@
             margin-bottom: 35px;
         }
 
-        /* Custom Two-Button Layout Grid */
         .btn-group {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -180,9 +181,82 @@
             transform: translateY(-2px);
         }
 
+        /* --- Mock Redirect Screen Panel --- */
+        .oauth-card {
+            background: #191b20;
+            border-radius: 12px;
+            border: 1px solid #2f3136;
+            text-align: center;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .oauth-header {
+            background: #111216;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #23252a;
+            font-size: 0.9rem;
+            color: #b9bbbe;
+            font-weight: 600;
+        }
+
+        .oauth-close-x {
+            color: #72767d;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .oauth-body {
+            padding: 40px 30px;
+        }
+
+        .roblox-logo {
+            font-family: 'Arial Black', Gadget, sans-serif;
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: -1px;
+            margin-bottom: 35px;
+            text-transform: uppercase;
+        }
+
+        .redirect-title {
+            font-size: 1.4rem;
+            color: #ffffff;
+            margin: 30px 0 40px 0;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .blue-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3.5px solid rgba(0, 162, 255, 0.15);
+            border-top: 3.5px solid #00a2ff;
+            border-radius: 50%;
+            margin: 40px auto;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .redirect-footer {
+            color: #72767d;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin-top: 50px;
+        }
+
+        .redirect-footer span {
+            color: #00a2ff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
         }
     </style>
 </head>
@@ -207,35 +281,32 @@
             </div>
             
             <div class="btn-group">
-                <button class="action-btn proceed-btn" onclick="closeTab()">Proceed</button>
-                <button class="action-btn close-btn" onclick="closeTab()">Close</button>
+                <button class="action-btn proceed-btn" onclick="startRedirect()">Proceed</button>
+                <button class="action-btn close-btn" onclick="stayOnPage()">Close</button>
+            </div>
+        </div>
+
+        <!-- Mock Redirect Screen Panel -->
+        <div class="redirect-container" id="redirectSection">
+            <div class="oauth-card" style="padding-bottom: 40px;">
+                <div class="oauth-header">
+                    <span>Verify Your Account</span>
+                    <span class="oauth-close-x" onclick="stayOnPage()">✕</span>
+                </div>
+                <div class="oauth-body">
+                    <div class="roblox-logo">Roblox</div>
+                    
+                    <div class="redirect-title">Redirecting to roblox.com</div>
+                    <div class="blue-spinner"></div>
+                    
+                    <div class="redirect-footer">
+                        If you are not redirected back in a few seconds, <span onclick="stayOnPage()">cancel</span> and try again.
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         function startThinking() {
-            const cardContent = document.getElementById('cardContent');
-            const spinner = document.getElementById('loadingSpinner');
-            const prankSection = document.getElementById('prankSection');
-
-            cardContent.style.display = 'none';
-            spinner.style.display = 'block';
-
-            setTimeout(() => {
-                spinner.style.display = 'none';
-                prankSection.style.display = 'block';
-            }, 3000);
-        }
-
-        function closeTab() {
-            window.open(window.location, '_self').close();
-            window.close();
-            
-            document.body.innerHTML = '<div style="color: #666; font-family: sans-serif; text-align: center; margin-top: 40vh; font-size: 1.2rem;">Portal Terminated. You can safely close this tab.</div>';
-            document.body.style.background = '#000000';
-        }
-    </script>
-
-</body>
-</html>
+        
